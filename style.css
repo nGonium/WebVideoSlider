@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+video {
+  width: 100vw;
+}
+
+.met {
+  position: relative;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.met-playback-indicator {
+  color: white;
+}
+
+.met-panel {
+  padding: 5px;
+  background-color: black;
+  opacity: 40%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+}
+.met-panel .met-collapse {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.met-panel .met-toggles, .met-panel .met-playback {
+  display: flex;
+  gap: 4px;
+}
+.met-panel .met-toggles button, .met-panel .met-playback button {
+  cursor: pointer;
+  display: block;
+  border: none;
+  border-radius: 6px;
+  margin: 0;
+  padding: 0 4px;
+  min-width: -webkit-fit-content;
+  min-width: -moz-fit-content;
+  min-width: fit-content;
+  height: 24px;
+  width: 24px;
+  text-align: center;
+  line-height: 16px;
+  font-size: 16px;
+}
+.met-panel .met-toggles button:hover, .met-panel .met-playback button:hover {
+  background-color: #ccc;
+}
+.met-panel:hover .met-collapse {
+  visibility: visible;
+}
+.met-panel:hover + video {
+  pointer-events: none;
+}/*# sourceMappingURL=style.css.map */
