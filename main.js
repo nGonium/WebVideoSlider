@@ -10,8 +10,8 @@ const CF = {
         jumpDown: '«',
         control: 'C',
         loop: '🔁\ufe0e',
-        mute: '🔊\ufe0e;',
-        muted: '🔇\ufe0e;',
+        mute: '🔊\ufe0e',
+        muted: '🔇\ufe0e',
         pitch: '~',
         info: 'ℹ',
     },
@@ -41,17 +41,17 @@ function createMet(video) {
 
     const collapse = document.createElement('div')
     collapse.classList.add('met-collapse')
-    const playback = document.createElement('div')
-    playback.classList.add('met-playback')
+    
     video.addEventListener('ratechange', () => {
         listeners.ratechange.forEach((el) => el.dispatchEvent(new Event('metupdate')))
     })
     
-    // Create control configurations
+    // Allow elements to subscribe to video element events
     const listeners = {
         ratechange: [playbackIndicator]
     }
 
+    // Controls (button) configurations
     const metPlaybackBtns = [
         {
             symbol: CF.syms.jumpDown,
@@ -80,19 +80,65 @@ function createMet(video) {
     const metToggleBtns = [
         {
             symbol: CF.syms.control,
-            handler: () => undefined,
+            handler: (e) => {
+                video.toggleAttribute('controls')
+                // This removes controlslist restrictions if present
+                if (video.hasAttribute('controlslist')) {
+                    video.removeAttribute('controlslist')
+                }
+                e.target.dispatchEvent(new Event('metupdate'))
+            },
+            update: (e) => {
+                if (video.hasAttribute('controls')) {
+                    e.target.classList.add('met-btn--on')
+                } else {
+                    e.target.classList.remove('met-btn--on')
+                }
+            },
         },
         {
             symbol: CF.syms.loop,
-            handler: () => undefined,
+            handler: (e) => {
+                video.toggleAttribute('loop')
+                e.target.dispatchEvent(new Event('metupdate'))
+            },
+            update: (e) => {
+                if (video.hasAttribute('loop')) {
+                    e.target.classList.add('met-btn--on')
+                } else {
+                    e.target.classList.remove('met-btn--on')
+                }
+            }
         },
         {
             symbol: CF.syms.mute,
-            handler: () => undefined,
+            handler: (e) => {
+                video.muted = !video.muted
+            },
+            update: (e) => {
+                if (video.muted) {
+                    e.target.textContent = CF.syms.muted
+                    e.target.classList.remove('met-btn--on')
+                } else {
+                    e.target.textContent = CF.syms.mute
+                    e.target.classList.add('met-btn--on')
+                }
+            },
+            listensTo: ['volumechange'],
         },
         {
             symbol: CF.syms.pitch,
-            handler: () => undefined,
+            handler: (e) => {
+                video.preservesPitch = !video.preservesPitch
+                e.target.dispatchEvent(new Event('metupdate'))
+            },
+            update: (e) => {
+                if (video.preservesPitch) {
+                    e.target.classList.add('met-btn--on')
+                } else {
+                    e.target.classList.remove('met-btn--on')
+                }
+            }
         },
         {
             symbol: CF.syms.info,
@@ -100,7 +146,7 @@ function createMet(video) {
         },
     ]
 
-    // Create button elements
+    // Creates button elements
     function createMetBtn({symbol, handler, update, listensTo}) {
         const btn = document.createElement('button')
         btn.textContent = symbol
@@ -117,21 +163,29 @@ function createMet(video) {
         return btn
     }
 
+    // Instantiate buttons
+    const playback = document.createElement('div')
+    playback.classList.add('met-playback')
     metPlaybackBtns.forEach((el) => {
         const btn = createMetBtn(el)
         playback.appendChild(btn)
     })
 
+    const toggles = document.createElement('div')
+    toggles.classList.add('met-toggles')
+    metToggleBtns.forEach((el) => {
+        const btn = createMetBtn(el)
+        toggles.appendChild(btn)
+    })
+
+    // Bubble video events to subscribed elements, trigger update via metupdate
     for (eventType of Object.keys(listeners)) {
-        video.addEventListener(eventType, () => {
-            listeners[eventType].forEach(
-                (el) => el.dispatchEvent(new Event('metupdate'))
-            )
+        video.addEventListener(eventType, (e) => {
+            listeners[e.type].forEach((el) => el.dispatchEvent(new Event('metupdate')))
         })
     }
     
-    const toggles = document.createElement('div')
-    toggles.classList.add('met-toggles')
+    
     
     // Attach elements
     // Contain video and panel
@@ -142,6 +196,7 @@ function createMet(video) {
     panel.appendChild(playbackIndicator)
     panel.appendChild(collapse)
     collapse.appendChild(playback)
+    collapse.appendChild(toggles)
 }
 
 
