@@ -19,7 +19,8 @@ video {
 .met-panel {
     padding: 5px;
     background-color: black;
-    opacity: 40%;
+    opacity: 10%;
+    border-radius: 8px;
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -29,14 +30,17 @@ video {
     // To allow for :hover
     z-index: 9999;
     .met-collapse {
-        visibility: hidden;
-        display: flex;
+        display: none;
         flex-direction: column;
         gap: 4px;
     }
     .met-toggles, .met-playback {
         display: flex;
         gap: 4px;
+        .met-btn--on {
+            color: white;
+            background-color: rgb(49, 55, 228);
+        }
         button {
             cursor: pointer;
             display: block;
@@ -51,14 +55,15 @@ video {
             line-height: 16px;
             font-size: 16px;
             &:hover {
-                background-color: #ccc;
+                opacity: 80%;
             }
         }
     }
     
     &:hover {
+        opacity: 60%;
         .met-collapse {
-            visibility: visible;
+            display: flex;
         }
         +video {
             pointer-events: none;
