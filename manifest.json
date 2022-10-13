@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "Media Element Tools",
+    "version": "1.0",
+    "description": "Speed up or slow down any video element, along with a variety of other tools to modify video playback",
+    "content_scripts": [
+        {
+            "js": ["main.js"],
+            "css": ["style.css"],
+            "matches": [
+                "https://*/*",
+                "http://*/*"
+            ]
+        }
+    ]
+}
