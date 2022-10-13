@@ -84,18 +84,10 @@ function createMet(video) {
             handler: (e) => {
                 video.toggleAttribute('controls')
                 // This removes controlslist restrictions if present
-                if (video.hasAttribute('controlslist')) {
-                    video.removeAttribute('controlslist')
-                }
+                video.removeAttribute('controlslist')
                 e.target.dispatchEvent(new Event('metupdate'))
             },
-            update: (e) => {
-                if (video.hasAttribute('controls')) {
-                    e.target.classList.add('met-btn--on')
-                } else {
-                    e.target.classList.remove('met-btn--on')
-                }
-            },
+            update: (e) => e.target.classList.toggle('met-btn--on', video.hasAttribute('controls')),
         },
         {
             symbol: CF.syms.loop,
@@ -103,13 +95,7 @@ function createMet(video) {
                 video.toggleAttribute('loop')
                 e.target.dispatchEvent(new Event('metupdate'))
             },
-            update: (e) => {
-                if (video.hasAttribute('loop')) {
-                    e.target.classList.add('met-btn--on')
-                } else {
-                    e.target.classList.remove('met-btn--on')
-                }
-            }
+            update: (e) => e.target.classList.toggle('met-btn--on', video.hasAttribute('loop')),
         },
         {
             symbol: CF.syms.mute,
@@ -117,13 +103,8 @@ function createMet(video) {
                 video.muted = !video.muted
             },
             update: (e) => {
-                if (video.muted) {
-                    e.target.textContent = CF.syms.muted
-                    e.target.classList.remove('met-btn--on')
-                } else {
-                    e.target.textContent = CF.syms.mute
-                    e.target.classList.add('met-btn--on')
-                }
+                e.target.classList.toggle('met-btn--on', video.muted)
+                e.target.textContent = video.muted ? CF.syms.muted : CF.syms.mute
             },
             listensTo: ['volumechange'],
         },
@@ -133,13 +114,7 @@ function createMet(video) {
                 video.preservesPitch = !video.preservesPitch
                 e.target.dispatchEvent(new Event('metupdate'))
             },
-            update: (e) => {
-                if (video.preservesPitch) {
-                    e.target.classList.add('met-btn--on')
-                } else {
-                    e.target.classList.remove('met-btn--on')
-                }
-            }
+            update: (e) => e.target.classList.toggle('met-btn--on', video.preservesPitch),
         },
         {
             symbol: CF.syms.info,
@@ -154,11 +129,8 @@ function createMet(video) {
         btn.addEventListener('click', handler)
         btn.addEventListener('metupdate', update)
         listensTo?.forEach((eventType) => {
-            if (eventType in listeners) {
-                listeners[eventType].push(btn)
-            } else {
-                listeners[eventType] = [btn]
-            }
+            if (!(eventType in listeners)) listeners[eventType] = []
+            listeners[eventType].push(btn)
         })
         btn.dispatchEvent(new Event('metupdate'))
         return btn
@@ -172,17 +144,11 @@ function createMet(video) {
     // Instantiate buttons
     const playback = document.createElement('div')
     playback.classList.add('met-playback')
-    metPlaybackBtns.forEach((el) => {
-        const btn = createMetBtn(el)
-        playback.appendChild(btn)
-    })
+    metPlaybackBtns.forEach((btn) => playback.appendChild(createMetBtn(btn)))
 
     const toggles = document.createElement('div')
     toggles.classList.add('met-toggles')
-    metToggleBtns.forEach((el) => {
-        const btn = createMetBtn(el)
-        toggles.appendChild(btn)
-    })
+    metToggleBtns.forEach((btn) => toggles.appendChild(createMetBtn(btn)))
 
     // Bubble video events to subscribed elements, trigger update via metupdate
     for (eventType of Object.keys(listeners)) {
