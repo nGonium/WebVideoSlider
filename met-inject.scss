@@ -1,24 +1,16 @@
-* {
-    box-sizing: border-box;
-}
-body {
-    
-    margin: 0;
-    padding: 0;
-}
-video {
-    width: 100vw;
-}
 .met {
     position: relative;
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .met-playback-indicator {
     color: white;
 }
+
 .met-panel {
     padding: 5px;
-    background-color: black;
+    background-color: #111;
     opacity: 10%;
     border-radius: 8px;
     position: absolute;
@@ -34,6 +26,7 @@ video {
         flex-direction: column;
         gap: 4px;
     }
+
     .met-toggles, .met-playback {
         display: flex;
         gap: 4px;
@@ -61,12 +54,9 @@ video {
     }
     
     &:hover {
-        opacity: 60%;
+        opacity: 80%;
         .met-collapse {
             display: flex;
-        }
-        +video {
-            pointer-events: none;
         }
     }
 }
