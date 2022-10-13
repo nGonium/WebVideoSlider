@@ -2,8 +2,9 @@
 // Configuration
 const CF = {
     syms: {
-        play: '⏵',
-        pause: '⏸',
+        // \ufe0e ensures non-emoji representation, see variation selector-15
+        play: '⏵\ufe0e',
+        pause: '⏸\ufe0e',
         speedUp: '\u203A',
         speedDown: '\u2039',
         jumpUp: '»',
@@ -163,6 +164,11 @@ function createMet(video) {
         return btn
     }
 
+    // Prevent video and other elements behind panel from receiving events
+    panel.addEventListener('click', (e) => e.stopImmediatePropagation())
+    panel.addEventListener('dblclick', (e) => e.stopImmediatePropagation())
+    panel.addEventListener('contextmenu', (e) => e.stopImmediatePropagation())
+
     // Instantiate buttons
     const playback = document.createElement('div')
     playback.classList.add('met-playback')
@@ -184,8 +190,6 @@ function createMet(video) {
             listeners[e.type].forEach((el) => el.dispatchEvent(new Event('metupdate')))
         })
     }
-    
-    
     
     // Attach elements
     // Contain video and panel
