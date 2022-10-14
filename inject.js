@@ -43,7 +43,38 @@ function createMet(video) {
     const listeners = {}
 
     // Controls (button) configurations
-    const metBtns = [
+    const metBtns = getBtnConfig({video, panel})
+
+    // Prevent video and other elements behind panel from receiving events
+    panel.addEventListener('click', (e) => e.stopImmediatePropagation())
+    panel.addEventListener('dblclick', (e) => e.stopImmediatePropagation())
+    panel.addEventListener('contextmenu', (e) => e.stopImmediatePropagation())
+
+    // Instantiate buttons
+    metBtns.forEach((btn) => collapse.appendChild(createMetBtn(btn, listeners)))
+
+    // Bubble video events to subscribed elements, trigger update via metupdate
+    for (eventType of Object.keys(listeners)) {
+        video.addEventListener(eventType, (e) => {
+            listeners[e.type].forEach((el) => el.dispatchEvent(new Event('metupdate')))
+        })
+    }
+
+    // Make panel draggable
+    setElementMoveable(panel)
+    
+    // Attach elements
+    // Contain video and panel
+    video.parentNode.replaceChild(met, video)
+    met.appendChild(panel)
+    met.appendChild(video)
+    // Assemble panel
+    panel.appendChild(dropdown)
+    panel.appendChild(collapse)
+}
+
+function getBtnConfig({video, panel}) {
+    return [
         {
             type: 'span',
             symbol: CF.syms.logo,
@@ -69,7 +100,9 @@ function createMet(video) {
         {
             type: 'span',
             symbol: CF.syms.close,
-            handler: undefined,
+            handler: () => {
+                panel.remove()
+            },
         },
         {
             symbol: CF.syms.jumpDown,
@@ -135,33 +168,6 @@ function createMet(video) {
             handler: () => undefined,
         },
     ]
-
-    // Prevent video and other elements behind panel from receiving events
-    panel.addEventListener('click', (e) => e.stopImmediatePropagation())
-    panel.addEventListener('dblclick', (e) => e.stopImmediatePropagation())
-    panel.addEventListener('contextmenu', (e) => e.stopImmediatePropagation())
-
-    // Instantiate buttons
-    metBtns.forEach((btn) => collapse.appendChild(createMetBtn(btn, listeners)))
-
-    // Bubble video events to subscribed elements, trigger update via metupdate
-    for (eventType of Object.keys(listeners)) {
-        video.addEventListener(eventType, (e) => {
-            listeners[e.type].forEach((el) => el.dispatchEvent(new Event('metupdate')))
-        })
-    }
-
-    // Make panel draggable
-    setElementMoveable(panel)
-    
-    // Attach elements
-    // Contain video and panel
-    video.parentNode.replaceChild(met, video)
-    met.appendChild(panel)
-    met.appendChild(video)
-    // Assemble panel
-    panel.appendChild(dropdown)
-    panel.appendChild(collapse)
 }
 
 // Creates button elements

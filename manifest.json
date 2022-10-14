@@ -5,8 +5,8 @@
     "description": "Speed up or slow down any video element, along with a variety of other tools to modify video playback",
     "content_scripts": [
         {
-            "js": ["met-inject.js"],
-            "css": ["met-inject.css"],
+            "js": ["inject.js"],
+            "css": ["inject.css"],
             "matches": [
                 "https://*/*",
                 "http://*/*"
