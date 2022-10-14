@@ -3,6 +3,9 @@
 const CF = {
     syms: {
         // \ufe0e ensures non-emoji representation, see variation selector-15
+        logo: '⚲\ufe0e',
+        config: '🛠',
+        close: '⨯',
         play: '⏵\ufe0e',
         pause: '⏸\ufe0e',
         speedUp: '\u203A',
@@ -43,8 +46,11 @@ function createMet(video) {
     const metBtns = [
         {
             type: 'span',
-            symbol: 'M',
-            handler: undefined,
+            symbol: CF.syms.logo,
+            handler: (e) => {
+                panel.classList.toggle('met-panel--pinned')
+                e.target.textContent = panel.classList.contains('met-panel--pinned') ? '●' : CF.syms.logo
+            },
         },
         {
             type: 'span',
@@ -56,12 +62,12 @@ function createMet(video) {
         },
         {
             type: 'span',
-            symbol: '🛠',
+            symbol: CF.syms.config,
             handler: undefined,
         },
         {
             type: 'span',
-            symbol: '⨯',
+            symbol: CF.syms.close,
             handler: undefined,
         },
         {
@@ -143,6 +149,9 @@ function createMet(video) {
             listeners[e.type].forEach((el) => el.dispatchEvent(new Event('metupdate')))
         })
     }
+
+    // Make panel draggable
+    setElementMoveable(panel)
     
     // Attach elements
     // Contain video and panel
@@ -167,6 +176,24 @@ function createMetBtn({type, symbol, handler, update, listensTo, classList}, lis
     if (classList) btn.classList.add(...classList)
     btn.dispatchEvent(new Event('metupdate'))
     return btn
+}
+
+// Assumes an absolutely positioned element, intended for panel
+function setElementMoveable(el) {
+    el.setAttribute('draggable', 'true')
+    let dragStart = {}
+    el.addEventListener('dragstart', e => {
+        dragStart.x = e.offsetX
+        dragStart.y = e.offsetY
+    })
+    el.addEventListener('dragend', e => {
+        // --- Positions ---
+        // original: el.offset
+        // movement: e.offset - dragstart
+        // dest. XY: original + movement
+        el.style.top = `${el.offsetTop + e.offsetY - dragStart.y}px`
+        el.style.left = `${el.offsetLeft + e.offsetX - dragStart.x}px`
+    })
 }
 
 

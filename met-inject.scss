@@ -16,10 +16,7 @@ $theme-colour: rgb(49, 55, 228);
     border-radius: 8px;
     // To allow for :hover
     z-index: 9999;
-    span:hover {
-        opacity: 70%;
-    }
-    button {
+    button, span {
         cursor: pointer;
         border: none;
         border-radius: 4px;
@@ -31,7 +28,7 @@ $theme-colour: rgb(49, 55, 228);
         color: white;
         background-color: $theme-colour;
     }
-    &:hover, .met-panel--expanded {
+    &:hover, &.met-panel--expanded, &.met-panel--pinned {
         opacity: 70%;
         .met-dropdown {
             display: none;
