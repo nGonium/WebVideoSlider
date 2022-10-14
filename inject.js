@@ -186,22 +186,47 @@ function createMetBtn({type, symbol, handler, update, listensTo, classList}, lis
 }
 
 // Assumes an absolutely positioned element, intended for panel
-function setElementMoveable(el) {
+function setElementMoveable(el, isContained = true) {
     el.setAttribute('draggable', 'true')
     let dragStart = {}
-    el.addEventListener('dragstart', e => {
-        dragStart.x = e.offsetX
-        dragStart.y = e.offsetY
+    el.addEventListener('dragstart', event => {
+        dragStart.x = event.offsetX
+        dragStart.y = event.offsetY
     })
-    el.addEventListener('dragend', e => {
+    el.addEventListener('dragend', event => {
         // --- Positions ---
         // original: el.offset
-        // movement: e.offset - dragstart
+        // movement: event.offset - dragstart
         // dest. XY: original + movement
-        el.style.top = `${el.offsetTop + e.offsetY - dragStart.y}px`
-        el.style.left = `${el.offsetLeft + e.offsetX - dragStart.x}px`
+        const parent = {
+            width: el.offsetParent.offsetWidth,
+            height: el.offsetParent.offsetHeight,
+        }
+        const dest = {
+            x: isContained ? 
+            clamp(
+                el.offsetLeft + event.offsetX - dragStart.x, 
+                0,
+                parent.width - el.offsetWidth)
+            : el.offsetLeft + event.offsetX - dragStart.x,
+            y: isContained ? 
+            clamp(
+                el.offsetTop + event.offsetY - dragStart.y,
+                0,
+                parent.height - el.offsetHeight)
+            : el.offsetTop + event.offsetY - dragStart.y,
+        }
+        const relDest = {
+            x: dest.x / parent.width * 100,
+            y: dest.y / parent.height* 100,
+        }
+        
+        el.style.left = `${relDest.x}%`
+        el.style.top = `${relDest.y}%`
     })
 }
+
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 
 
 
