@@ -41,6 +41,7 @@ $theme-colour: rgb(49, 55, 228);
 
 .met-collapse {
     display: none;
+    vertical-align: text-top;
     grid-template-columns: repeat(5, 24px);
     grid-template-rows: repeat(3, 20px);
     text-align: center;

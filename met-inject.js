@@ -48,8 +48,9 @@ function createMet(video) {
             type: 'span',
             symbol: CF.syms.logo,
             handler: (e) => {
-                panel.classList.toggle('met-panel--pinned')
-                e.target.textContent = panel.classList.contains('met-panel--pinned') ? '●' : CF.syms.logo
+                const isPinned = panel.classList.toggle('met-panel--pinned')
+                e.target.style.lineHeight = isPinned ? '80%' : null
+                e.target.textContent = isPinned ? '●' : CF.syms.logo
             },
         },
         {
